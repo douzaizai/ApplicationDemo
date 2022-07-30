@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="60" debug="false">
+    <!-- 自定义变量 -->
+    <property name="appName" value="ApplicationDemo" />
+    <!-- 日志文件名称, 可随便命名 -->
+    <property name="baseFile" value="ApplicationDemo" />
+    <property name="rootPath" value="/Users/i569071/app/logs" />
+    <!-- 日志输出格式 -->
+    <property name="pattern"  value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <!-- 设置上下文名称 -->
+    <contextName>${appName}</contextName>
+
+    <!--控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <!-- 设置日志输出格式 -->
+            <pattern>${pattern}</pattern>
+            <!-- 设置输出字符集编码 -->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <!-- 磁盘文件滚动输出日志 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>${rootPath}/${baseFile}.log</File>
+        <append>true</append>
+        <prudent>false</prudent>
+
+        <!-- 磁盘日志文件rolling策略 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${rootPath}/${baseFile}_%d{yyyy-MM-dd}.log.gz</FileNamePattern>
+
+            <!-- 日志在磁盘上保留天数 -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <!-- 日志输出格式 -->
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>${pattern}</pattern>
+            <!-- 设置字符集 -->
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 把日志异步输出到磁盘文件中，避免每次都进行磁盘IO操作 -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>10000</queueSize>
+        <appender-ref ref="FILE" />
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="ASYNC" />
+        <appender-ref ref="STDOUT" />
+    </root>
+</configuration>
