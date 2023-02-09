@@ -84,7 +84,7 @@ public class MessageController {
   public void callbackGptTest(HttpServletRequest request, HttpServletResponse response) {
     try {
       request.setCharacterEncoding("utf-8");
-      response.setCharacterEncoding("utf-8");
+      response.setContentType("text/html; charset=utf-8");
       // 接收查询参数
       String model = request.getParameter("model");
       String prompt = request.getParameter("prompt");
@@ -93,11 +93,13 @@ public class MessageController {
       String result = gptChatService.chatCore(model, prompt, user);
       PrintWriter out = response.getWriter();
       out.print(result);
+      out.flush();
     } catch (Exception e) {
       log.error("callbackGptTest测试接口异常", e);
       try {
         PrintWriter out = response.getWriter();
         out.print(e);
+        out.flush();
       } catch (Exception e2) {
       }
 

@@ -28,13 +28,19 @@ public class GptChatService {
    * @return
    */
   public String chatCore(String model, String prompt, String user) {
-    StringBuilder result = new StringBuilder(100);
+    StringBuilder result = new StringBuilder();
     try {
-      OpenAiService service = new OpenAiService(myConfig.getOpenAIToken());
+      OpenAiService service = new OpenAiService(myConfig.getOpenAIToken(), 60000);
       CompletionRequest completionRequest = CompletionRequest.builder()
               .model(model)
               .prompt(prompt)
-              .echo(true)
+              .temperature(0.9)
+              .maxTokens(10000)
+              .n(1)
+              //.stream(true)
+              .frequencyPenalty(0.0)
+              //.presencePenalty(0.6)
+              //.echo(true)
               .user(user)
               .build();
       List<CompletionChoice> choices = service.createCompletion(completionRequest).getChoices();
